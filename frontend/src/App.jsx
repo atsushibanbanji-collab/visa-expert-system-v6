@@ -1,11 +1,19 @@
 import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import DiagnosisPanel from './components/DiagnosisPanel'
 import InferencePanel from './components/InferencePanel'
 import ResultPanel from './components/ResultPanel'
+import AdminLayout from './components/admin/AdminLayout'
+import RuleManagement from './components/admin/RuleManagement'
+import RuleValidator from './components/admin/RuleValidator'
+import DatabaseConsole from './components/admin/DatabaseConsole'
+import SQLConsole from './components/admin/SQLConsole'
+import Analytics from './components/admin/Analytics'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
-function App() {
+// 診断アプリケーション（メイン機能）
+function DiagnosisApp() {
   const [sessionId, setSessionId] = useState(null)
   const [currentQuestion, setCurrentQuestion] = useState(null)
   const [answers, setAnswers] = useState([])
@@ -141,11 +149,19 @@ function App() {
   return (
     <div className="w-full h-screen flex flex-col bg-gray-50">
       {/* ヘッダー */}
-      <header className="bg-primary text-white py-4 px-6 shadow-md">
-        <h1 className="text-2xl font-bold">ビザ選定エキスパートシステム</h1>
-        <p className="text-sm text-gray-200 mt-1">
-          オブジェクト指向エキスパートシステム - バックワードチェイニング方式
-        </p>
+      <header className="bg-primary text-white py-4 px-6 shadow-md flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold">ビザ選定エキスパートシステム</h1>
+          <p className="text-sm text-gray-200 mt-1">
+            オブジェクト指向エキスパートシステム - バックワードチェイニング方式
+          </p>
+        </div>
+        <Link
+          to="/admin"
+          className="bg-white text-primary px-4 py-2 rounded hover:bg-gray-100 transition duration-200 font-semibold"
+        >
+          管理画面
+        </Link>
       </header>
 
       {/* メインコンテンツ */}
@@ -206,6 +222,28 @@ function App() {
         )}
       </div>
     </div>
+  )
+}
+
+// メインAppコンポーネント（ルーティング設定）
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* 診断画面（メイン機能） */}
+        <Route path="/" element={<DiagnosisApp />} />
+
+        {/* 管理画面 */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Analytics />} />
+          <Route path="rules" element={<RuleManagement />} />
+          <Route path="validator" element={<RuleValidator />} />
+          <Route path="database" element={<DatabaseConsole />} />
+          <Route path="sql" element={<SQLConsole />} />
+          <Route path="analytics" element={<Analytics />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 

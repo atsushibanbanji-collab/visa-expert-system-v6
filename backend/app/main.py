@@ -8,6 +8,7 @@ from app.database.config import get_db, engine, Base
 from app.models import models
 from app.services.inference_engine import InferenceEngine, WorkingMemory, Rule, AnswerType, RuleStatus
 from app.services.visa_rules import VISA_RULES, VISA_GOALS
+from app.routers import admin
 from pydantic import BaseModel
 
 # データベーステーブル作成
@@ -23,6 +24,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 管理用ルーター登録
+app.include_router(admin.router)
 
 # ===== Pydanticモデル =====
 class ConsultationStartRequest(BaseModel):
