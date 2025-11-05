@@ -203,7 +203,7 @@ function RuleManagement() {
 
       <div className="grid grid-cols-2 gap-6">
         {/* 左側: ルール一覧 */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white border shadow p-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-gray-800">ルール一覧</h3>
             <button
@@ -279,7 +279,7 @@ function RuleManagement() {
         </div>
 
         {/* 右側: ルール編集 */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white border shadow p-6">
           {(isEditing || isCreating) ? (
             <div className="space-y-4">
               <div className="flex justify-between items-center">

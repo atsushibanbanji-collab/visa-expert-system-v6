@@ -103,8 +103,8 @@ function DatabaseConsole() {
 
       <div className="grid grid-cols-4 gap-6">
         {/* 左側: テーブル一覧 */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">テーブル一覧</h3>
+        <div className="bg-white border shadow p-6">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">テーブル一覧</h3>
           <div className="space-y-2">
             {tables.map(table => (
               <button
@@ -126,7 +126,7 @@ function DatabaseConsole() {
         </div>
 
         {/* 右側: テーブルデータ */}
-        <div className="col-span-3 bg-white rounded-lg shadow p-6">
+        <div className="col-span-3 bg-white border shadow p-6">
           {selectedTable ? (
             <div>
               <div className="flex justify-between items-center mb-4">

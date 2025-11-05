@@ -65,25 +65,25 @@ function Analytics() {
       {/* 統計カード */}
       {stats && (
         <div className="grid grid-cols-4 gap-4">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm text-gray-600 mb-2">総診断数</div>
-            <div className="text-3xl font-bold text-primary">{stats.total_consultations}</div>
+          <div className="bg-white border shadow p-6">
+            <div className="text-xs uppercase tracking-wide text-gray-500 mb-2 font-semibold">総診断数</div>
+            <div className="text-3xl font-bold text-gray-800">{stats.total_consultations}</div>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm text-gray-600 mb-2">完了診断数</div>
-            <div className="text-3xl font-bold text-green-600">{stats.completed_consultations}</div>
+          <div className="bg-white border shadow p-6">
+            <div className="text-xs uppercase tracking-wide text-gray-500 mb-2 font-semibold">完了診断数</div>
+            <div className="text-3xl font-bold text-gray-800">{stats.completed_consultations}</div>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm text-gray-600 mb-2">完了率</div>
-            <div className="text-3xl font-bold text-blue-600">
+          <div className="bg-white border shadow p-6">
+            <div className="text-xs uppercase tracking-wide text-gray-500 mb-2 font-semibold">完了率</div>
+            <div className="text-3xl font-bold text-gray-800">
               {stats.total_consultations > 0
                 ? Math.round((stats.completed_consultations / stats.total_consultations) * 100)
                 : 0}%
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm text-gray-600 mb-2">平均質問数</div>
-            <div className="text-3xl font-bold text-purple-600">
+          <div className="bg-white border shadow p-6">
+            <div className="text-xs uppercase tracking-wide text-gray-500 mb-2 font-semibold">平均質問数</div>
+            <div className="text-3xl font-bold text-gray-800">
               {Math.round(stats.average_questions * 10) / 10}
             </div>
           </div>
@@ -93,8 +93,8 @@ function Analytics() {
       <div className="grid grid-cols-2 gap-6">
         {/* ビザタイプ別統計 */}
         {stats && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">ビザタイプ別結果</h3>
+          <div className="bg-white border shadow p-6">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">ビザタイプ別結果</h3>
             <div className="space-y-3">
               {Object.entries(stats.visa_type_stats).map(([visaType, count]) => {
                 const total = stats.completed_consultations
@@ -121,16 +121,16 @@ function Analytics() {
 
         {/* よく使われる質問 */}
         {questionPaths && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">よく使われる質問 Top 10</h3>
+          <div className="bg-white border shadow p-6">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">よく使われる質問 Top 10</h3>
             <div className="space-y-2">
               {questionPaths.most_common_questions.map((item, index) => (
-                <div key={index} className="flex items-start gap-3 p-2 hover:bg-gray-50 rounded">
-                  <div className="flex-shrink-0 w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center text-xs font-bold">
+                <div key={index} className="flex items-start gap-3 p-3 border-b last:border-b-0 hover:bg-gray-50">
+                  <div className="flex-shrink-0 w-8 text-center text-sm font-semibold text-gray-500">
                     {index + 1}
                   </div>
                   <div className="flex-1">
-                    <div className="text-sm text-gray-800">{item.fact}</div>
+                    <div className="text-sm text-gray-800 font-medium">{item.fact}</div>
                     <div className="text-xs text-gray-600 mt-1">
                       使用回数: {item.usage_count}回 / 平均順位: {Math.round(item.average_order * 10) / 10}
                     </div>
@@ -144,8 +144,8 @@ function Analytics() {
 
       {/* 監査ログ */}
       {auditLog && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">監査ログ（最新20件）</h3>
+        <div className="bg-white border shadow p-6">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">監査ログ（最新20件）</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>

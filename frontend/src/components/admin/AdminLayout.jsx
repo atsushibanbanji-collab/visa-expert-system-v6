@@ -4,11 +4,11 @@ function AdminLayout() {
   const location = useLocation()
 
   const menuItems = [
-    { path: '/admin', label: '統計・ダッシュボード', icon: '📊' },
-    { path: '/admin/rules', label: 'ルール管理', icon: '📋' },
-    { path: '/admin/validator', label: '整合性チェック', icon: '✓' },
-    { path: '/admin/database', label: 'DB管理', icon: '🗄️' },
-    { path: '/admin/sql', label: 'SQLコンソール', icon: '💻' },
+    { path: '/admin', label: '統計・ダッシュボード' },
+    { path: '/admin/rules', label: 'ルール管理' },
+    { path: '/admin/validator', label: '整合性チェック' },
+    { path: '/admin/database', label: 'データベース管理' },
+    { path: '/admin/sql', label: 'SQLコンソール' },
   ]
 
   return (
@@ -42,14 +42,13 @@ function AdminLayout() {
                   <li key={item.path}>
                     <Link
                       to={item.path}
-                      className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition duration-200 ${
+                      className={`block px-4 py-3 transition duration-200 border-l-4 ${
                         isActive
-                          ? 'bg-primary text-white'
-                          : 'text-gray-700 hover:bg-gray-100'
+                          ? 'border-primary bg-gray-100 text-primary font-semibold'
+                          : 'border-transparent text-gray-700 hover:bg-gray-50 hover:border-gray-300'
                       }`}
                     >
-                      <span className="text-xl">{item.icon}</span>
-                      <span className="font-medium">{item.label}</span>
+                      <span>{item.label}</span>
                     </Link>
                   </li>
                 )

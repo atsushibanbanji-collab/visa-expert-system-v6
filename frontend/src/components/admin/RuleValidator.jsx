@@ -81,31 +81,26 @@ function RuleValidator() {
 
       {/* 総合結果 */}
       {validationResults && (
-        <div className={`rounded-lg p-6 ${isValid ? 'bg-green-50 border-2 border-green-300' : 'bg-red-50 border-2 border-red-300'}`}>
-          <div className="flex items-center">
-            <div className="text-3xl mr-4">
-              {isValid ? '✓' : '✗'}
-            </div>
-            <div>
-              <h3 className={`text-xl font-bold ${isValid ? 'text-green-800' : 'text-red-800'}`}>
-                {isValid ? '整合性チェック: 合格' : '整合性チェック: 問題あり'}
-              </h3>
-              <p className={`text-sm ${isValid ? 'text-green-700' : 'text-red-700'}`}>
-                {isValid
-                  ? '全てのルールは整合性が取れています'
-                  : '以下の問題が検出されました。修正が必要です。'
-                }
-              </p>
-            </div>
+        <div className={`border-l-4 p-6 ${isValid ? 'bg-gray-50 border-green-600' : 'bg-gray-50 border-red-600'}`}>
+          <div>
+            <h3 className={`text-xl font-bold ${isValid ? 'text-green-700' : 'text-red-700'}`}>
+              {isValid ? '整合性チェック: 合格' : '整合性チェック: 問題検出'}
+            </h3>
+            <p className="text-sm text-gray-700 mt-2">
+              {isValid
+                ? '全てのルールは整合性が取れています。システムは正常に動作します。'
+                : '以下の問題が検出されました。修正が必要です。'
+              }
+            </p>
           </div>
         </div>
       )}
 
       {/* 矛盾の検出結果 */}
       {validationResults && validationResults.contradictions && validationResults.contradictions.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            ⚠️ ルール間の矛盾 ({validationResults.contradictions.length}件)
+        <div className="bg-white border shadow p-6">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">
+            ルール間の矛盾 ({validationResults.contradictions.length}件)
           </h3>
           <div className="space-y-3">
             {validationResults.contradictions.map((issue, index) => (
@@ -134,9 +129,9 @@ function RuleValidator() {
 
       {/* 到達不可能なルール */}
       {validationResults && validationResults.unreachable_rules && validationResults.unreachable_rules.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            🚫 到達不可能なルール ({validationResults.unreachable_rules.length}件)
+        <div className="bg-white border shadow p-6">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">
+            到達不可能なルール ({validationResults.unreachable_rules.length}件)
           </h3>
           <div className="space-y-3">
             {validationResults.unreachable_rules.map((issue, index) => (
@@ -166,9 +161,9 @@ function RuleValidator() {
 
       {/* 循環参照 */}
       {validationResults && validationResults.circular_references && validationResults.circular_references.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            🔄 循環参照 ({validationResults.circular_references.length}件)
+        <div className="bg-white border shadow p-6">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">
+            循環参照 ({validationResults.circular_references.length}件)
           </h3>
           <div className="space-y-3">
             {validationResults.circular_references.map((issue, index) => (
@@ -200,9 +195,9 @@ function RuleValidator() {
 
       {/* 孤立した事実 */}
       {validationResults && validationResults.orphaned_facts && validationResults.orphaned_facts.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            📝 孤立した事実 ({validationResults.orphaned_facts.length}件)
+        <div className="bg-white border shadow p-6">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">
+            孤立した事実 ({validationResults.orphaned_facts.length}件)
           </h3>
           <div className="space-y-3">
             {validationResults.orphaned_facts.map((issue, index) => (
@@ -231,13 +226,12 @@ function RuleValidator() {
 
       {/* 問題なしの場合 */}
       {validationResults && isValid && (
-        <div className="bg-white rounded-lg shadow p-6 text-center py-10">
-          <div className="text-6xl mb-4">✓</div>
-          <h3 className="text-2xl font-semibold text-green-800 mb-2">
+        <div className="bg-white border shadow p-6 text-center py-10">
+          <h3 className="text-2xl font-semibold text-gray-800 mb-2">
             全てのチェックをパスしました
           </h3>
           <p className="text-gray-600">
-            ルールシステムは正常に動作します
+            ルールシステムは正常に動作します。
           </p>
         </div>
       )}

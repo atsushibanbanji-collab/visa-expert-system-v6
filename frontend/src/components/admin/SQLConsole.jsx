@@ -87,7 +87,7 @@ function SQLConsole() {
         {/* 左側: クエリ入力 */}
         <div className="col-span-2 space-y-4">
           {/* モード切替 */}
-          <div className="bg-white rounded-lg shadow p-4">
+          <div className="bg-white border shadow p-4">
             <div className="flex items-center gap-4">
               <label className="flex items-center">
                 <input
@@ -113,7 +113,7 @@ function SQLConsole() {
           </div>
 
           {/* クエリエディタ */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white border shadow p-6">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">SQLクエリ</h3>
             <textarea
               value={query}
@@ -148,7 +148,7 @@ function SQLConsole() {
 
           {/* 結果表示 */}
           {results && (
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white border shadow p-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">実行結果</h3>
 
               {results.success && results.rows ? (
@@ -195,8 +195,8 @@ function SQLConsole() {
         {/* 右側: サンプルクエリ & 履歴 */}
         <div className="space-y-4">
           {/* サンプルクエリ */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">サンプルクエリ</h3>
+          <div className="bg-white border shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">サンプルクエリ</h3>
             <div className="space-y-2">
               {sampleQueries.map((sample, index) => (
                 <button
@@ -215,8 +215,8 @@ function SQLConsole() {
 
           {/* クエリ履歴 */}
           {queryHistory.length > 0 && (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">実行履歴</h3>
+            <div className="bg-white border shadow p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">実行履歴</h3>
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {queryHistory.map((item, index) => (
                   <button
