@@ -14,6 +14,8 @@ function App() {
   const [isCompleted, setIsCompleted] = useState(false)
   const [result, setResult] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [detailQuestionsMode, setDetailQuestionsMode] = useState(false)
+  const [detailQuestionsContext, setDetailQuestionsContext] = useState(null)
 
   // 診断開始
   const startDiagnosis = async () => {
@@ -90,9 +92,20 @@ function App() {
         answer: answer
       }])
 
-      setCurrentQuestion(data.next_question)
-      setIsCompleted(data.is_completed)
-      setResult(data.result)
+      // 詳細質問モードのチェック（システムイメージ.txt行56-62準拠）
+      if (data.detail_questions_needed && data.detail_questions && data.detail_questions.length > 0) {
+        // 「わからない」回答に対する詳細質問
+        setDetailQuestionsMode(true)
+        setDetailQuestionsContext(currentQuestion)  // 元の質問を保持
+        setCurrentQuestion(data.next_question)
+      } else {
+        // 通常の質問フロー
+        setDetailQuestionsMode(false)
+        setDetailQuestionsContext(null)
+        setCurrentQuestion(data.next_question)
+        setIsCompleted(data.is_completed)
+        setResult(data.result)
+      }
 
       // ルールと作業記憶を更新
       await fetchRulesAndMemory(sessionId)
@@ -121,6 +134,8 @@ function App() {
     setWorkingMemory(null)
     setIsCompleted(false)
     setResult(null)
+    setDetailQuestionsMode(false)
+    setDetailQuestionsContext(null)
   }
 
   return (
@@ -168,6 +183,8 @@ function App() {
               onBack={goBack}
               onReset={resetDiagnosis}
               isLoading={isLoading}
+              detailQuestionsMode={detailQuestionsMode}
+              detailQuestionsContext={detailQuestionsContext}
             />
 
             {/* 右側: 推論過程可視化 */}

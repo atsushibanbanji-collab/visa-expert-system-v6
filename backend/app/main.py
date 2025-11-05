@@ -45,6 +45,8 @@ class AnswerResponse(BaseModel):
     derived_facts: List[str]
     is_completed: bool
     result: Optional[dict]
+    detail_questions_needed: bool = False
+    detail_questions: List[str] = []
 
 class RuleResponse(BaseModel):
     id: int
@@ -133,6 +135,20 @@ def answer_question(request: AnswerRequest, db: Session = Depends(get_db)):
     answer_type = AnswerType(request.answer.lower())
     result = engine.process_answer(request.fact, answer_type, wm)
 
+    # 「わからない」回答で詳細質問が必要な場合
+    if result.get("detail_questions_needed", False):
+        # 詳細質問を返す（診断は継続）
+        return AnswerResponse(
+            session_id=session_id,
+            next_question=result["detail_questions"][0] if result["detail_questions"] else None,
+            fired_rules=[],
+            derived_facts=[],
+            is_completed=False,
+            result=None,
+            detail_questions_needed=True,
+            detail_questions=result["detail_questions"]
+        )
+
     # データベースに回答を保存
     db_session = db.query(models.ConsultationSession).filter(
         models.ConsultationSession.session_id == session_id
@@ -189,7 +205,9 @@ def answer_question(request: AnswerRequest, db: Session = Depends(get_db)):
         fired_rules=result["fired_rules"],
         derived_facts=result["derived_facts"],
         is_completed=is_completed,
-        result=diagnosis_result
+        result=diagnosis_result,
+        detail_questions_needed=False,
+        detail_questions=[]
     )
 
 @app.get("/api/consultation/{session_id}/rules", response_model=List[RuleResponse])

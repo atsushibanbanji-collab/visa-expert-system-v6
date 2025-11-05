@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-function DiagnosisPanel({ currentQuestion, answers, onAnswer, onBack, onReset, isLoading }) {
+function DiagnosisPanel({ currentQuestion, answers, onAnswer, onBack, onReset, isLoading, detailQuestionsMode, detailQuestionsContext }) {
   return (
     <div className="w-1/2 border-r border-gray-300 flex flex-col bg-white">
       {/* パネルヘッダー */}
@@ -33,6 +33,22 @@ function DiagnosisPanel({ currentQuestion, answers, onAnswer, onBack, onReset, i
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* 詳細質問モードの説明 */}
+        {detailQuestionsMode && detailQuestionsContext && (
+          <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-4 mb-4">
+            <h4 className="text-sm font-semibold text-yellow-800 mb-2">
+              📋 詳細質問モード（システムイメージ.txt行56-62準拠）
+            </h4>
+            <p className="text-sm text-gray-700 mb-2">
+              前の質問「<span className="font-medium">{detailQuestionsContext}</span>」に対して
+              「わからない」と回答されました。
+            </p>
+            <p className="text-sm text-gray-700">
+              この事実を判定するため、より具体的な質問をします。これらの回答から推論エンジンが結論を導出します。
+            </p>
           </div>
         )}
 
