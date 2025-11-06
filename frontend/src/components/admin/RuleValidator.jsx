@@ -28,13 +28,13 @@ function RuleValidator() {
   const getSeverityColor = (severity) => {
     switch (severity) {
       case 'high':
-        return 'bg-red-100 border-red-300 text-red-800'
+        return 'bg-white border-2 border-gray-600 text-gray-800'
       case 'medium':
-        return 'bg-yellow-100 border-yellow-300 text-yellow-800'
+        return 'bg-white border-2 border-gray-500 text-gray-800'
       case 'low':
-        return 'bg-blue-100 border-blue-300 text-blue-800'
+        return 'bg-white border border-gray-400 text-gray-800'
       default:
-        return 'bg-gray-100 border-gray-300 text-gray-800'
+        return 'bg-gray-100 border border-gray-300 text-gray-800'
     }
   }
 
@@ -55,7 +55,7 @@ function RuleValidator() {
     return (
       <div className="flex items-center justify-center py-20">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <div className="inline-block animate-spin h-12 w-12 border-b-2 border-gray-800"></div>
           <p className="text-gray-600 mt-4">整合性チェック実行中...</p>
         </div>
       </div>
@@ -73,7 +73,7 @@ function RuleValidator() {
         <button
           onClick={runValidation}
           disabled={isLoading}
-          className="bg-primary hover:bg-blue-800 text-white px-6 py-2 rounded font-semibold transition duration-200"
+          className="border-2 border-gray-600 bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 font-semibold transition duration-200"
         >
           再チェック
         </button>
@@ -81,9 +81,9 @@ function RuleValidator() {
 
       {/* 総合結果 */}
       {validationResults && (
-        <div className={`border-l-4 p-6 ${isValid ? 'bg-gray-50 border-green-600' : 'bg-gray-50 border-red-600'}`}>
+        <div className="border-l-4 border-gray-600 bg-gray-50 p-6">
           <div>
-            <h3 className={`text-xl font-bold ${isValid ? 'text-green-700' : 'text-red-700'}`}>
+            <h3 className="text-xl font-bold text-gray-800">
               {isValid ? '整合性チェック: 合格' : '整合性チェック: 問題検出'}
             </h3>
             <p className="text-sm text-gray-700 mt-2">
@@ -106,11 +106,11 @@ function RuleValidator() {
             {validationResults.contradictions.map((issue, index) => (
               <div
                 key={index}
-                className={`border rounded-lg p-4 ${getSeverityColor(issue.severity)}`}
+                className={`border p-4 ${getSeverityColor(issue.severity)}`}
               >
                 <div className="flex justify-between items-start mb-2">
                   <span className="font-semibold">矛盾 #{index + 1}</span>
-                  <span className="text-xs px-2 py-1 bg-white rounded">
+                  <span className="text-xs px-2 py-1 border border-gray-400 bg-gray-100">
                     重要度: {getSeverityLabel(issue.severity)}
                   </span>
                 </div>
@@ -137,11 +137,11 @@ function RuleValidator() {
             {validationResults.unreachable_rules.map((issue, index) => (
               <div
                 key={index}
-                className={`border rounded-lg p-4 ${getSeverityColor(issue.severity)}`}
+                className={`border p-4 ${getSeverityColor(issue.severity)}`}
               >
                 <div className="flex justify-between items-start mb-2">
                   <span className="font-semibold">ルール #{issue.rule_id}</span>
-                  <span className="text-xs px-2 py-1 bg-white rounded">
+                  <span className="text-xs px-2 py-1 border border-gray-400 bg-gray-100">
                     重要度: {getSeverityLabel(issue.severity)}
                   </span>
                 </div>
@@ -169,18 +169,18 @@ function RuleValidator() {
             {validationResults.circular_references.map((issue, index) => (
               <div
                 key={index}
-                className={`border rounded-lg p-4 ${getSeverityColor(issue.severity)}`}
+                className={`border p-4 ${getSeverityColor(issue.severity)}`}
               >
                 <div className="flex justify-between items-start mb-2">
                   <span className="font-semibold">循環 #{index + 1}</span>
-                  <span className="text-xs px-2 py-1 bg-white rounded">
+                  <span className="text-xs px-2 py-1 border border-gray-400 bg-gray-100">
                     重要度: {getSeverityLabel(issue.severity)}
                   </span>
                 </div>
                 <p className="text-sm mb-2">{issue.message}</p>
                 <div className="text-xs mb-2">
                   <strong>循環パス:</strong>
-                  <div className="mt-1 bg-white p-2 rounded font-mono text-xs">
+                  <div className="mt-1 bg-gray-100 p-2 border border-gray-300 font-mono text-xs">
                     {issue.cycle.join(' → ')} → {issue.cycle[0]}
                   </div>
                 </div>
@@ -203,11 +203,11 @@ function RuleValidator() {
             {validationResults.orphaned_facts.map((issue, index) => (
               <div
                 key={index}
-                className={`border rounded-lg p-4 ${getSeverityColor(issue.severity)}`}
+                className={`border p-4 ${getSeverityColor(issue.severity)}`}
               >
                 <div className="flex justify-between items-start mb-2">
                   <span className="font-semibold">事実 #{index + 1}</span>
-                  <span className="text-xs px-2 py-1 bg-white rounded">
+                  <span className="text-xs px-2 py-1 border border-gray-400 bg-gray-100">
                     重要度: {getSeverityLabel(issue.severity)}
                   </span>
                 </div>

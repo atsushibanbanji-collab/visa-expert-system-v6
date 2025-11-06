@@ -14,7 +14,7 @@ function AdminLayout() {
   return (
     <div className="w-full h-screen flex flex-col bg-gray-50">
       {/* ヘッダー */}
-      <header className="bg-primary text-white py-4 px-6 shadow-md flex justify-between items-center">
+      <header className="bg-gray-800 text-white py-4 px-6 shadow-md flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">管理画面</h1>
           <p className="text-sm text-gray-200 mt-1">
@@ -23,7 +23,7 @@ function AdminLayout() {
         </div>
         <Link
           to="/"
-          className="bg-white text-primary px-4 py-2 rounded hover:bg-gray-100 transition duration-200 font-semibold"
+          className="border-2 border-white text-white px-4 py-2 hover:bg-white hover:text-gray-800 transition duration-200 font-semibold"
         >
           診断画面に戻る
         </Link>
@@ -44,7 +44,7 @@ function AdminLayout() {
                       to={item.path}
                       className={`block px-4 py-3 transition duration-200 border-l-4 ${
                         isActive
-                          ? 'border-primary bg-gray-100 text-primary font-semibold'
+                          ? 'border-gray-800 bg-gray-100 text-gray-800 font-semibold'
                           : 'border-transparent text-gray-700 hover:bg-gray-50 hover:border-gray-300'
                       }`}
                     >

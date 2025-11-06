@@ -39,7 +39,7 @@ function Analytics() {
     return (
       <div className="flex items-center justify-center py-20">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <div className="inline-block animate-spin h-12 w-12 border-b-2 border-gray-800"></div>
           <p className="text-gray-600 mt-4">データ読み込み中...</p>
         </div>
       </div>
@@ -56,7 +56,7 @@ function Analytics() {
         </div>
         <button
           onClick={fetchAllData}
-          className="bg-primary hover:bg-blue-800 text-white px-6 py-2 rounded font-semibold transition duration-200"
+          className="border-2 border-gray-600 bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 font-semibold transition duration-200"
         >
           更新
         </button>
@@ -106,9 +106,9 @@ function Analytics() {
                       <span className="text-sm font-medium text-gray-700">{visaType}ビザ</span>
                       <span className="text-sm text-gray-600">{count}件 ({Math.round(percentage)}%)</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-gray-200 h-2">
                       <div
-                        className="bg-primary h-2 rounded-full transition-all duration-500"
+                        className="bg-gray-800 h-2 transition-all duration-500"
                         style={{ width: `${percentage}%` }}
                       ></div>
                     </div>
@@ -163,12 +163,7 @@ function Analytics() {
                       {new Date(log.created_at).toLocaleString()}
                     </td>
                     <td className="px-4 py-2">
-                      <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                        log.action === 'create' ? 'bg-green-100 text-green-800' :
-                        log.action === 'update' ? 'bg-blue-100 text-blue-800' :
-                        log.action === 'delete' ? 'bg-red-100 text-red-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
+                      <span className="px-2 py-1 text-xs font-semibold border border-gray-400 bg-white text-gray-800">
                         {log.action}
                       </span>
                     </td>
@@ -184,7 +179,7 @@ function Analytics() {
 
       {/* データがない場合 */}
       {!stats && !questionPaths && !auditLog && !isLoading && (
-        <div className="bg-white rounded-lg shadow p-6 text-center py-20">
+        <div className="bg-white shadow p-6 text-center py-20">
           <div className="text-gray-500 text-lg">データがありません</div>
           <p className="text-gray-400 text-sm mt-2">診断を実行すると統計が表示されます</p>
         </div>

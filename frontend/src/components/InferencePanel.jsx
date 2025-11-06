@@ -5,12 +5,12 @@ function InferencePanel({ rules, workingMemory, currentQuestion }) {
 
     // findingsから確認
     if (fact in workingMemory.findings) {
-      return workingMemory.findings[fact] ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'
+      return workingMemory.findings[fact] ? 'text-gray-900 font-bold' : 'text-gray-400 line-through'
     }
 
     // hypothesesから確認（導出された事実）
     if (fact in workingMemory.hypotheses) {
-      return workingMemory.hypotheses[fact] ? 'text-purple-600 font-semibold' : 'text-red-600 font-semibold'
+      return workingMemory.hypotheses[fact] ? 'text-gray-800 font-semibold underline' : 'text-gray-400 line-through'
     }
 
     // 未確認
@@ -19,18 +19,18 @@ function InferencePanel({ rules, workingMemory, currentQuestion }) {
 
   // ルールの状態による背景色
   const getRuleBackground = (rule) => {
-    if (!rule.status) return 'bg-white'
+    if (!rule.status) return 'bg-white border-gray-300'
 
     switch (rule.status) {
       case 'fired':
-        return 'bg-blue-50 border-blue-300'
+        return 'bg-gray-100 border-gray-500'
       case 'failed':
       case 'skipped':
-        return 'bg-gray-50 border-gray-200 opacity-60'
+        return 'bg-white border-gray-200 opacity-40'
       case 'evaluating':
-        return 'bg-yellow-50 border-yellow-300'
+        return 'bg-white border-gray-400'
       default:
-        return 'bg-white border-gray-200'
+        return 'bg-white border-gray-300'
     }
   }
 
@@ -39,10 +39,10 @@ function InferencePanel({ rules, workingMemory, currentQuestion }) {
     if (!status || status === 'not_evaluated') return null
 
     const badges = {
-      'fired': <span className="px-2 py-1 text-xs font-semibold bg-blue-500 text-white rounded">発火済み</span>,
-      'evaluating': <span className="px-2 py-1 text-xs font-semibold bg-yellow-500 text-white rounded">評価中</span>,
-      'failed': <span className="px-2 py-1 text-xs font-semibold bg-gray-400 text-white rounded">失敗</span>,
-      'skipped': <span className="px-2 py-1 text-xs font-semibold bg-gray-400 text-white rounded">スキップ</span>
+      'fired': <span className="px-2 py-1 text-xs font-semibold bg-gray-800 text-white">発火済み</span>,
+      'evaluating': <span className="px-2 py-1 text-xs font-semibold border-2 border-gray-600 text-gray-800">評価中</span>,
+      'failed': <span className="px-2 py-1 text-xs font-semibold bg-gray-400 text-white">失敗</span>,
+      'skipped': <span className="px-2 py-1 text-xs font-semibold bg-gray-400 text-white">スキップ</span>
     }
 
     return badges[status]
@@ -100,28 +100,12 @@ function InferencePanel({ rules, workingMemory, currentQuestion }) {
 
       {/* 凡例 */}
       <div className="bg-white border-b border-gray-300 px-6 py-3">
-        <h3 className="text-sm font-semibold text-gray-700 mb-2">凡例</h3>
-        <div className="flex flex-wrap gap-4 text-xs">
-          <div className="flex items-center gap-1">
-            <span className="w-3 h-3 bg-gray-500 rounded"></span>
-            <span>未確認</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <span className="w-3 h-3 bg-green-600 rounded"></span>
-            <span>Yes（条件満たす）</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <span className="w-3 h-3 bg-red-600 rounded"></span>
-            <span>No（条件満たさず）</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <span className="w-3 h-3 bg-purple-600 rounded"></span>
-            <span>導出された事実</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <span className="w-3 h-3 bg-blue-500 rounded"></span>
-            <span>発火済みルール</span>
-          </div>
+        <h3 className="text-xs uppercase tracking-wide font-semibold text-gray-600 mb-2">凡例</h3>
+        <div className="grid grid-cols-2 gap-2 text-xs text-gray-700">
+          <div>• 未確認: <span className="text-gray-500">グレー</span></div>
+          <div>• Yes: <span className="font-bold text-gray-900">太字</span></div>
+          <div>• No: <span className="text-gray-400 line-through">取消線</span></div>
+          <div>• 導出: <span className="font-semibold underline text-gray-800">下線</span></div>
         </div>
       </div>
 
@@ -142,7 +126,7 @@ function InferencePanel({ rules, workingMemory, currentQuestion }) {
                   {visaRules.map(rule => (
                     <div
                       key={rule.id}
-                      className={`border-2 rounded-lg p-4 transition-all ${getRuleBackground(rule)}`}
+                      className={`border-2 p-4 transition-all ${getRuleBackground(rule)}`}
                     >
                       {/* ルールヘッダー */}
                       <div className="flex items-start justify-between mb-3">
@@ -177,10 +161,10 @@ function InferencePanel({ rules, workingMemory, currentQuestion }) {
                         <p className="text-xs font-semibold text-gray-600 mb-1">THEN（結論）:</p>
                         <div className="pl-3">
                           {rule.actions.map((action, idx) => (
-                            <p key={idx} className={`text-sm font-semibold ${
+                            <p key={idx} className={`text-sm ${
                               workingMemory && action.fact in workingMemory.hypotheses
-                                ? 'text-blue-600'
-                                : 'text-gray-600'
+                                ? 'text-gray-900 font-bold'
+                                : 'text-gray-600 font-semibold'
                             }`}>
                               ⇒ {action.fact}
                             </p>

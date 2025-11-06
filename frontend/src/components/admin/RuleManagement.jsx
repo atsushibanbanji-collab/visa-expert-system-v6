@@ -196,7 +196,7 @@ function RuleManagement() {
       </div>
 
       {message && (
-        <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded">
+        <div className="bg-white border-2 border-gray-400 text-gray-800 px-4 py-3">
           {message}
         </div>
       )}
@@ -208,7 +208,7 @@ function RuleManagement() {
             <h3 className="text-xl font-semibold text-gray-800">ルール一覧</h3>
             <button
               onClick={handleCreateClick}
-              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded font-semibold transition duration-200"
+              className="border-2 border-gray-600 bg-white hover:bg-gray-100 text-gray-800 px-4 py-2 font-semibold transition duration-200"
             >
               + 新規作成
             </button>

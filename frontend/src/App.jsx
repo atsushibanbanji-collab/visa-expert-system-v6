@@ -158,7 +158,7 @@ function DiagnosisApp() {
         </div>
         <Link
           to="/admin"
-          className="bg-white text-primary px-4 py-2 rounded hover:bg-gray-100 transition duration-200 font-semibold"
+          className="border-2 border-white text-white px-4 py-2 hover:bg-white hover:text-primary transition duration-200 font-semibold"
         >
           管理画面
         </Link>
@@ -180,7 +180,7 @@ function DiagnosisApp() {
               <button
                 onClick={startDiagnosis}
                 disabled={isLoading}
-                className="bg-primary hover:bg-blue-800 text-white font-bold py-3 px-8 rounded-lg transition duration-200 disabled:opacity-50"
+                className="border-2 border-gray-700 bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-8 transition duration-200 disabled:opacity-50"
               >
                 {isLoading ? '準備中...' : '診断を開始する'}
               </button>
