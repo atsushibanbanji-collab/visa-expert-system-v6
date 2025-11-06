@@ -30,7 +30,7 @@ app.include_router(admin.router)
 
 # ===== Pydanticモデル =====
 class ConsultationStartRequest(BaseModel):
-    visa_types: Optional[List[str]] = ["E", "B", "L", "H-1B", "J-1"]
+    visa_types: Optional[List[str]] = ["E", "B", "L"]  # システムイメージ.txt 行21準拠
 
 class ConsultationStartResponse(BaseModel):
     session_id: str
