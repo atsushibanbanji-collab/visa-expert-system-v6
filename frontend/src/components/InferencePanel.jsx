@@ -23,12 +23,12 @@ function InferencePanel({ rules, workingMemory, currentQuestion }) {
 
     switch (rule.status) {
       case 'fired':
-        return 'bg-gray-100 border-gray-500'
+        return 'bg-white border-green-600'
       case 'failed':
       case 'skipped':
-        return 'bg-white border-gray-200 opacity-40'
+        return 'bg-white border-gray-300 opacity-40'
       case 'evaluating':
-        return 'bg-white border-gray-400'
+        return 'bg-white border-blue-600'
       default:
         return 'bg-white border-gray-300'
     }
@@ -39,10 +39,10 @@ function InferencePanel({ rules, workingMemory, currentQuestion }) {
     if (!status || status === 'not_evaluated') return null
 
     const badges = {
-      'fired': <span className="px-2 py-1 text-xs font-semibold bg-gray-800 text-white">発火済み</span>,
-      'evaluating': <span className="px-2 py-1 text-xs font-semibold border-2 border-gray-600 text-gray-800">評価中</span>,
-      'failed': <span className="px-2 py-1 text-xs font-semibold bg-gray-400 text-white">失敗</span>,
-      'skipped': <span className="px-2 py-1 text-xs font-semibold bg-gray-400 text-white">スキップ</span>
+      'fired': <span className="px-2 py-1 text-xs font-semibold bg-green-700 text-white">発火済み</span>,
+      'evaluating': <span className="px-2 py-1 text-xs font-semibold border-2 border-blue-600 text-blue-700">評価中</span>,
+      'failed': <span className="px-2 py-1 text-xs font-semibold bg-gray-500 text-white">失敗</span>,
+      'skipped': <span className="px-2 py-1 text-xs font-semibold bg-gray-500 text-white">スキップ</span>
     }
 
     return badges[status]

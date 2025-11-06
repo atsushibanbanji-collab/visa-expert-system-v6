@@ -141,7 +141,7 @@ function SQLConsole() {
 
           {/* エラー表示 */}
           {error && (
-            <div className="bg-white border-2 border-gray-400 text-gray-800 px-4 py-3">
+            <div className="bg-white border-2 border-red-600 text-red-800 px-4 py-3">
               <strong>エラー:</strong> {error}
             </div>
           )}
@@ -184,7 +184,7 @@ function SQLConsole() {
                   </div>
                 </div>
               ) : results.success && results.rows_affected !== undefined ? (
-                <div className="bg-white border-2 border-gray-400 text-gray-800 px-4 py-3">
+                <div className="bg-white border-2 border-green-600 text-green-800 px-4 py-3">
                   {results.message} （{results.rows_affected}行が影響を受けました）
                 </div>
               ) : null}

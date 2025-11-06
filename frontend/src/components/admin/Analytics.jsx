@@ -108,7 +108,7 @@ function Analytics() {
                     </div>
                     <div className="w-full bg-gray-200 h-2">
                       <div
-                        className="bg-gray-800 h-2 transition-all duration-500"
+                        className="bg-blue-700 h-2 transition-all duration-500"
                         style={{ width: `${percentage}%` }}
                       ></div>
                     </div>
@@ -163,7 +163,12 @@ function Analytics() {
                       {new Date(log.created_at).toLocaleString()}
                     </td>
                     <td className="px-4 py-2">
-                      <span className="px-2 py-1 text-xs font-semibold border border-gray-400 bg-white text-gray-800">
+                      <span className={`px-2 py-1 text-xs font-semibold ${
+                        log.action === 'create' ? 'bg-green-700 text-white' :
+                        log.action === 'update' ? 'bg-blue-700 text-white' :
+                        log.action === 'delete' ? 'bg-red-700 text-white' :
+                        'bg-gray-600 text-white'
+                      }`}>
                         {log.action}
                       </span>
                     </td>

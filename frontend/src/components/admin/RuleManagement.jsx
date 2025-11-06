@@ -196,7 +196,7 @@ function RuleManagement() {
       </div>
 
       {message && (
-        <div className="bg-white border-2 border-gray-400 text-gray-800 px-4 py-3">
+        <div className="bg-white border-2 border-blue-600 text-blue-800 px-4 py-3">
           {message}
         </div>
       )}

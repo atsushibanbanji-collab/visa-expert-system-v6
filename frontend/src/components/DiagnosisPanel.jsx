@@ -20,7 +20,11 @@ function DiagnosisPanel({ currentQuestion, answers, onAnswer, onBack, onReset, i
                   <p className="text-xs uppercase tracking-wide text-gray-500 mb-1">質問 {index + 1}</p>
                   <p className="text-gray-800 font-medium mb-2">{item.question}</p>
                   <p className="text-sm text-gray-700">
-                    回答: <span className="font-semibold text-gray-800">
+                    回答: <span className={`font-semibold ${
+                      item.answer === 'yes' ? 'text-green-700' :
+                      item.answer === 'no' ? 'text-red-700' :
+                      'text-gray-600'
+                    }`}>
                       {item.answer === 'yes' ? 'はい' :
                        item.answer === 'no' ? 'いいえ' :
                        'わからない'}
@@ -61,21 +65,21 @@ function DiagnosisPanel({ currentQuestion, answers, onAnswer, onBack, onReset, i
               <button
                 onClick={() => onAnswer('yes')}
                 disabled={isLoading}
-                className="border-2 border-gray-400 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="border-2 border-green-600 bg-white hover:bg-green-50 text-green-700 font-semibold py-3 px-4 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 はい
               </button>
               <button
                 onClick={() => onAnswer('no')}
                 disabled={isLoading}
-                className="border-2 border-gray-400 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="border-2 border-red-600 bg-white hover:bg-red-50 text-red-700 font-semibold py-3 px-4 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 いいえ
               </button>
               <button
                 onClick={() => onAnswer('unknown')}
                 disabled={isLoading}
-                className="border-2 border-gray-400 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="border-2 border-gray-500 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 わからない
               </button>

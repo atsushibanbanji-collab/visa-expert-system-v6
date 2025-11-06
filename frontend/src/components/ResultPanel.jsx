@@ -22,9 +22,9 @@ function ResultPanel({ result, answers, onReset }) {
               {applicableVisas.map((visa, index) => (
                 <div
                   key={index}
-                  className="bg-white border-2 border-gray-600 p-6"
+                  className="bg-white border-2 border-green-600 p-6"
                 >
-                  <h4 className="text-lg font-bold text-gray-900 mb-2">{visa}</h4>
+                  <h4 className="text-lg font-bold text-green-800 mb-2">{visa}</h4>
                   <p className="text-sm text-gray-700">
                     このビザタイプの条件を満たしています
                   </p>
@@ -32,8 +32,8 @@ function ResultPanel({ result, answers, onReset }) {
               ))}
             </div>
           ) : (
-            <div className="bg-white border-2 border-gray-400 p-6 text-center">
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+            <div className="bg-white border-2 border-red-600 p-6 text-center">
+              <h3 className="text-xl font-semibold text-red-800 mb-2">
                 申請可能なビザが見つかりませんでした
               </h3>
               <p className="text-gray-700">
@@ -54,16 +54,16 @@ function ResultPanel({ result, answers, onReset }) {
                 key={visa}
                 className={`border-2 p-4 ${
                   achieved
-                    ? 'bg-white border-gray-600'
+                    ? 'bg-white border-green-600'
                     : 'bg-gray-50 border-gray-300'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-gray-800">{visa}</span>
-                  <span className={`px-3 py-1 text-xs font-semibold border ${
+                  <span className={`px-3 py-1 text-xs font-semibold ${
                     achieved
-                      ? 'bg-gray-800 text-white border-gray-800'
-                      : 'bg-white text-gray-600 border-gray-400'
+                      ? 'bg-green-700 text-white'
+                      : 'bg-gray-400 text-white'
                   }`}>
                     {achieved ? '可能' : '不可'}
                   </span>
@@ -85,7 +85,11 @@ function ResultPanel({ result, answers, onReset }) {
                   <span className="text-gray-600 font-semibold">Q{index + 1}:</span>{' '}
                   <span className="text-gray-800">{item.question}</span>
                   {' '}→{' '}
-                  <span className="font-semibold text-gray-900">
+                  <span className={`font-semibold ${
+                    item.answer === 'yes' ? 'text-green-700' :
+                    item.answer === 'no' ? 'text-red-700' :
+                    'text-gray-600'
+                  }`}>
                     {item.answer === 'yes' ? 'はい' :
                      item.answer === 'no' ? 'いいえ' :
                      'わからない'}

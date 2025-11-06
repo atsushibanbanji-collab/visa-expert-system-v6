@@ -28,11 +28,11 @@ function RuleValidator() {
   const getSeverityColor = (severity) => {
     switch (severity) {
       case 'high':
-        return 'bg-white border-2 border-gray-600 text-gray-800'
+        return 'bg-white border-2 border-red-600 text-red-800'
       case 'medium':
-        return 'bg-white border-2 border-gray-500 text-gray-800'
+        return 'bg-white border-2 border-yellow-600 text-yellow-800'
       case 'low':
-        return 'bg-white border border-gray-400 text-gray-800'
+        return 'bg-white border border-blue-600 text-blue-800'
       default:
         return 'bg-gray-100 border border-gray-300 text-gray-800'
     }
@@ -81,9 +81,9 @@ function RuleValidator() {
 
       {/* 総合結果 */}
       {validationResults && (
-        <div className="border-l-4 border-gray-600 bg-gray-50 p-6">
+        <div className={`border-l-4 ${isValid ? 'border-green-600' : 'border-red-600'} bg-gray-50 p-6`}>
           <div>
-            <h3 className="text-xl font-bold text-gray-800">
+            <h3 className={`text-xl font-bold ${isValid ? 'text-green-700' : 'text-red-700'}`}>
               {isValid ? '整合性チェック: 合格' : '整合性チェック: 問題検出'}
             </h3>
             <p className="text-sm text-gray-700 mt-2">
