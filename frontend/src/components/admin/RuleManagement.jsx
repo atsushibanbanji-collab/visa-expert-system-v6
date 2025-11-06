@@ -20,7 +20,9 @@ function RuleManagement() {
     rule_type: 'selection',
     conditions: [],
     actions: [],
-    flag: true
+    flag: true,
+    version: 1,  // システムイメージ.txt 行143: 楽観的ロック用
+    priority: 1  // システムイメージ.txt 行116: 質問の優先順位
   })
 
   useEffect(() => {
@@ -72,7 +74,9 @@ function RuleManagement() {
       rule_type: 'selection',
       conditions: [],
       actions: [],
-      flag: true
+      flag: true,
+      version: 1,
+      priority: 1
     })
   }
 
@@ -86,7 +90,9 @@ function RuleManagement() {
       rule_type: rule.rule_type,
       conditions: JSON.parse(JSON.stringify(rule.conditions)),
       actions: JSON.parse(JSON.stringify(rule.actions)),
-      flag: rule.flag
+      flag: rule.flag,
+      version: rule.version || 1,  // システムイメージ.txt 行143: 楽観的ロック用
+      priority: rule.priority || 1  // システムイメージ.txt 行116: 質問の優先順位
     })
   }
 
@@ -112,6 +118,15 @@ function RuleManagement() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
         })
+      }
+
+      // システムイメージ.txt 行143: 楽観的ロックによる競合検出
+      if (response.status === 409) {
+        const data = await response.json()
+        setMessage(`編集競合: ${data.detail}。ページを再読み込みしてください。`)
+        await fetchRules()
+        handleCancelEdit()
+        return
       }
 
       const data = await response.json()
@@ -402,6 +417,23 @@ function RuleManagement() {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              {/* 優先順位（システムイメージ.txt 行116準拠） */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  質問の優先順位
+                </label>
+                <input
+                  type="number"
+                  value={formData.priority}
+                  onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) || 1 })}
+                  min="1"
+                  className="w-full px-3 py-2 border border-gray-300 rounded"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  数字が小さいほど優先度が高くなります
+                </p>
               </div>
 
               {/* フラグ */}

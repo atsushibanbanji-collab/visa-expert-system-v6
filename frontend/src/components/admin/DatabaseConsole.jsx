@@ -10,6 +10,7 @@ function DatabaseConsole() {
   const [message, setMessage] = useState('')
   const [page, setPage] = useState(0)
   const [pageSize] = useState(50)
+  const [importFile, setImportFile] = useState(null)
 
   useEffect(() => {
     fetchTables()
@@ -76,6 +77,43 @@ function DatabaseConsole() {
     }
   }
 
+  const handleImport = async () => {
+    if (!importFile) {
+      setMessage('インポートするファイルを選択してください')
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      const fileContent = await importFile.text()
+      const data = JSON.parse(fileContent)
+
+      const response = await fetch(`${API_BASE_URL}/api/admin/database/import`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+
+      if (response.ok) {
+        setMessage('データベースをインポートしました')
+        setImportFile(null)
+        // テーブル一覧を再取得
+        await fetchTables()
+        if (selectedTable) {
+          await fetchTableData(selectedTable, page)
+        }
+      } else {
+        const errorData = await response.json()
+        setMessage(`インポートに失敗しました: ${errorData.detail || ''}`)
+      }
+    } catch (error) {
+      console.error('インポートエラー:', error)
+      setMessage('インポートに失敗しました')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const totalPages = tableData ? Math.ceil(tableData.total_count / pageSize) : 0
 
   return (
@@ -84,15 +122,45 @@ function DatabaseConsole() {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-3xl font-bold text-gray-800">データベース管理</h2>
-          <p className="text-gray-600 mt-1">テーブル閲覧・データエクスポート（システムイメージ.txt 行124-143）</p>
+          <p className="text-gray-600 mt-1">テーブル閲覧・データエクスポート・インポート（システムイメージ.txt 行124-143）</p>
         </div>
-        <button
-          onClick={handleExport}
-          disabled={isLoading}
-          className="border-2 border-gray-600 bg-white hover:bg-gray-100 text-gray-800 px-6 py-2 font-semibold transition duration-200 disabled:opacity-50"
-        >
-          エクスポート
-        </button>
+        <div className="flex gap-3">
+          {/* インポート */}
+          <div className="flex items-center gap-2">
+            <input
+              type="file"
+              accept=".json"
+              onChange={(e) => setImportFile(e.target.files[0])}
+              className="hidden"
+              id="import-file"
+            />
+            <label
+              htmlFor="import-file"
+              className="border-2 border-gray-600 bg-white hover:bg-gray-100 text-gray-800 px-4 py-2 font-semibold transition duration-200 cursor-pointer"
+            >
+              ファイル選択
+            </label>
+            {importFile && (
+              <span className="text-sm text-gray-600">{importFile.name}</span>
+            )}
+            <button
+              onClick={handleImport}
+              disabled={isLoading || !importFile}
+              className="border-2 border-gray-600 bg-white hover:bg-gray-100 text-gray-800 px-4 py-2 font-semibold transition duration-200 disabled:opacity-50"
+            >
+              インポート
+            </button>
+          </div>
+
+          {/* エクスポート */}
+          <button
+            onClick={handleExport}
+            disabled={isLoading}
+            className="border-2 border-gray-600 bg-white hover:bg-gray-100 text-gray-800 px-6 py-2 font-semibold transition duration-200 disabled:opacity-50"
+          >
+            エクスポート
+          </button>
+        </div>
       </div>
 
       {message && (

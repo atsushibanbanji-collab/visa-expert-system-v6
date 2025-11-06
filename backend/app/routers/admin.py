@@ -27,6 +27,7 @@ class RuleCreateRequest(BaseModel):
     conditions: List[Dict]
     actions: List[Dict]
     flag: bool = True
+    priority: int = 1  # システムイメージ.txt 行116: 質問の優先順位
 
 class RuleUpdateRequest(BaseModel):
     name: Optional[str] = None
@@ -35,6 +36,8 @@ class RuleUpdateRequest(BaseModel):
     conditions: Optional[List[Dict]] = None
     actions: Optional[List[Dict]] = None
     flag: Optional[bool] = None
+    version: Optional[int] = None  # システムイメージ.txt 行143: 楽観的ロック用
+    priority: Optional[int] = None  # システムイメージ.txt 行116: 質問の優先順位
 
 class SQLQueryRequest(BaseModel):
     query: str
@@ -76,7 +79,9 @@ def create_rule(request: RuleCreateRequest, db: Session = Depends(get_db)):
         "rule_type": request.rule_type,
         "conditions": request.conditions,
         "actions": request.actions,
-        "flag": request.flag
+        "flag": request.flag,
+        "version": 1,  # システムイメージ.txt 行143: 楽観的ロック用の初期バージョン
+        "priority": request.priority  # システムイメージ.txt 行116: 質問の優先順位
     }
 
     # 整合性チェック
@@ -119,12 +124,21 @@ def create_rule(request: RuleCreateRequest, db: Session = Depends(get_db)):
 
 @router.put("/rules/{rule_id}")
 def update_rule_admin(rule_id: int, request: RuleUpdateRequest, db: Session = Depends(get_db)):
-    """ルールを更新"""
+    """ルールを更新（システムイメージ.txt 行143: 楽観的ロックサポート）"""
     rule_index = next((i for i, r in enumerate(VISA_RULES) if r["id"] == rule_id), None)
     if rule_index is None:
         raise HTTPException(status_code=404, detail="ルールが見つかりません")
 
     old_rule = VISA_RULES[rule_index].copy()
+
+    # 楽観的ロックチェック（システムイメージ.txt 行143準拠）
+    current_version = old_rule.get("version", 1)
+    if request.version is not None and request.version != current_version:
+        raise HTTPException(
+            status_code=409,
+            detail=f"編集競合が発生しました。他のユーザーがこのルールを更新しています。現在のバージョン: {current_version}"
+        )
+
     updated_rule = old_rule.copy()
 
     # 更新内容を適用
@@ -140,6 +154,11 @@ def update_rule_admin(rule_id: int, request: RuleUpdateRequest, db: Session = De
         updated_rule["actions"] = request.actions
     if request.flag is not None:
         updated_rule["flag"] = request.flag
+    if request.priority is not None:
+        updated_rule["priority"] = request.priority
+
+    # バージョンを1増やす（システムイメージ.txt 行143準拠）
+    updated_rule["version"] = current_version + 1
 
     # 整合性チェック
     test_rules = [updated_rule if r["id"] == rule_id else r for r in VISA_RULES]
