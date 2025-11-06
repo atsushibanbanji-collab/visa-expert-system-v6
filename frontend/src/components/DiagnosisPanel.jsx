@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 function DiagnosisPanel({ currentQuestion, answers, onAnswer, onBack, onReset, isLoading, detailQuestionsMode, detailQuestionsContext }) {
   return (
-    <div className="w-1/2 border-r border-gray-300 flex flex-col bg-white">
+    <div className="w-1/2 border-r border-gray-300 flex flex-col bg-white" role="main" aria-label="診断画面">
       {/* パネルヘッダー */}
       <div className="bg-gray-100 border-b border-gray-300 px-6 py-4">
         <h2 className="text-xl font-bold text-gray-800">診断画面</h2>
@@ -61,10 +61,11 @@ function DiagnosisPanel({ currentQuestion, answers, onAnswer, onBack, onReset, i
             <p className="text-xl text-gray-800 mb-6 font-medium">{currentQuestion}</p>
 
             {/* 回答ボタン */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-3" role="group" aria-label="質問への回答">
               <button
                 onClick={() => onAnswer('yes')}
                 disabled={isLoading}
+                aria-label="はい"
                 className="border-2 border-green-600 bg-white hover:bg-green-50 text-green-700 font-semibold py-3 px-4 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 はい
@@ -72,6 +73,7 @@ function DiagnosisPanel({ currentQuestion, answers, onAnswer, onBack, onReset, i
               <button
                 onClick={() => onAnswer('no')}
                 disabled={isLoading}
+                aria-label="いいえ"
                 className="border-2 border-red-600 bg-white hover:bg-red-50 text-red-700 font-semibold py-3 px-4 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 いいえ
@@ -79,6 +81,7 @@ function DiagnosisPanel({ currentQuestion, answers, onAnswer, onBack, onReset, i
               <button
                 onClick={() => onAnswer('unknown')}
                 disabled={isLoading}
+                aria-label="わからない"
                 className="border-2 border-gray-500 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 わからない
