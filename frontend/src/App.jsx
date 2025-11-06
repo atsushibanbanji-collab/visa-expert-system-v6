@@ -35,7 +35,7 @@ function DiagnosisApp() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          visa_types: ["E", "B", "L", "H-1B", "J-1"]
+          visa_types: ["E", "B", "L"]  // システムイメージ.txt 行21準拠
         })
       })
 
@@ -125,12 +125,47 @@ function DiagnosisApp() {
     }
   }
 
-  // 前の質問に戻る
-  const goBack = () => {
+  // 前の質問に戻る（システムイメージ.txt 行25-31準拠）
+  const goBack = async () => {
     if (answers.length === 0) return
-    // 簡略実装: 最初からやり直し
-    alert('前の質問に戻る機能は、現在「最初から」と同じ動作です')
-    resetDiagnosis()
+    if (!sessionId) return
+
+    setIsLoading(true)
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/consultation/undo`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          session_id: sessionId
+        })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        // 最後の回答を削除
+        setAnswers(prev => prev.slice(0, -1))
+
+        // 次の質問を設定
+        setCurrentQuestion(data.next_question)
+
+        // 完了状態をリセット
+        setIsCompleted(false)
+        setResult(null)
+
+        // ルールと作業記憶を更新
+        await fetchRulesAndMemory(sessionId)
+      } else {
+        alert(data.message || '前の質問に戻れませんでした')
+      }
+    } catch (error) {
+      console.error('戻るエラー:', error)
+      alert('前の質問に戻る処理に失敗しました')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   // 最初からやり直し
@@ -175,7 +210,7 @@ function DiagnosisApp() {
               </h2>
               <p className="text-gray-600 mb-8 max-w-md">
                 このシステムは、あなたに適したビザタイプを診断します。
-                質問に答えていくことで、E、B、L、H-1B、J-1ビザの申請可能性を判定します。
+                質問に答えていくことで、E、B、Lビザの申請可能性を判定します。
               </p>
               <button
                 onClick={startDiagnosis}

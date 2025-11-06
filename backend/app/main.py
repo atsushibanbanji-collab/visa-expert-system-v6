@@ -52,6 +52,15 @@ class AnswerResponse(BaseModel):
     detail_questions_needed: bool = False
     detail_questions: List[str] = []
 
+class UndoRequest(BaseModel):
+    session_id: str
+
+class UndoResponse(BaseModel):
+    session_id: str
+    next_question: Optional[str]
+    message: str
+    can_undo: bool
+
 class RuleResponse(BaseModel):
     id: int
     name: str
@@ -96,12 +105,13 @@ def start_consultation(request: ConsultationStartRequest, db: Session = Depends(
     engine = InferenceEngine(inference_rules)
     wm = WorkingMemory()
 
-    # セッション保存
+    # セッション保存（システムイメージ.txt 行25-31: 回答履歴管理）
     sessions[session_id] = {
         "engine": engine,
         "wm": wm,
         "visa_types": request.visa_types,
-        "goals": VISA_GOALS
+        "goals": VISA_GOALS,
+        "answer_history": []  # 回答履歴スタック（戻る機能用）
     }
 
     # データベースにセッション保存
@@ -134,10 +144,28 @@ def answer_question(request: AnswerRequest, db: Session = Depends(get_db)):
     engine = session["engine"]
     wm = session["wm"]
     goals = session["goals"]
+    answer_history = session["answer_history"]
+
+    # 回答処理の前の状態をスナップショット（戻る機能用）
+    wm_snapshot_before = {
+        "findings": dict(wm.findings),
+        "hypotheses": dict(wm.hypotheses),
+        "conflict_set": set(wm.conflict_set),
+        "evaluated_rules": dict(wm.evaluated_rules),
+        "skipped_facts": set(wm.skipped_facts),
+        "asked_derivable_facts": set(wm.asked_derivable_facts)
+    }
 
     # 回答を処理
     answer_type = AnswerType(request.answer.lower())
     result = engine.process_answer(request.fact, answer_type, wm)
+
+    # 回答履歴に追加（処理前の状態を保存）
+    answer_history.append({
+        "fact": request.fact,
+        "answer": request.answer,
+        "wm_snapshot_before": wm_snapshot_before
+    })
 
     # 「わからない」回答で詳細質問が必要な場合
     if result.get("detail_questions_needed", False):
@@ -212,6 +240,76 @@ def answer_question(request: AnswerRequest, db: Session = Depends(get_db)):
         result=diagnosis_result,
         detail_questions_needed=False,
         detail_questions=[]
+    )
+
+@app.post("/api/consultation/undo", response_model=UndoResponse)
+def undo_answer(request: UndoRequest, db: Session = Depends(get_db)):
+    """
+    前の質問に戻る（システムイメージ.txt 行25-31準拠）
+    - 直前の質問に戻り、回答を変更可能
+    - 該当する回答をクリア
+    - その回答に依存する導出事実も自動的にクリア
+    - 推論過程の表示もリセット
+    """
+    session_id = request.session_id
+
+    if session_id not in sessions:
+        raise HTTPException(status_code=404, detail="セッションが見つかりません")
+
+    session = sessions[session_id]
+    answer_history = session["answer_history"]
+    engine = session["engine"]
+    wm = session["wm"]
+    goals = session["goals"]
+
+    # 回答履歴が空の場合
+    if not answer_history:
+        return UndoResponse(
+            session_id=session_id,
+            next_question=engine.get_next_question(goals, wm),
+            message="戻る履歴がありません",
+            can_undo=False
+        )
+
+    # 最後の回答を取り出す
+    last_answer = answer_history.pop()
+
+    # 作業記憶を前の状態に復元
+    wm_snapshot = last_answer["wm_snapshot_before"]
+    wm.findings = dict(wm_snapshot["findings"])
+    wm.hypotheses = dict(wm_snapshot["hypotheses"])
+    wm.conflict_set = set(wm_snapshot["conflict_set"])
+    wm.evaluated_rules = dict(wm_snapshot["evaluated_rules"])
+    wm.skipped_facts = set(wm_snapshot["skipped_facts"])
+    wm.asked_derivable_facts = set(wm_snapshot["asked_derivable_facts"])
+
+    # 次の質問を再計算
+    next_question = engine.get_next_question(goals, wm)
+
+    # データベースから最後の回答を削除
+    db_session = db.query(models.ConsultationSession).filter(
+        models.ConsultationSession.session_id == session_id
+    ).first()
+
+    if db_session and db_session.answers:
+        # 最後の回答を削除
+        last_db_answer = db_session.answers[-1]
+        db.delete(last_db_answer)
+
+        # セッション情報を更新
+        db_session.findings = wm.findings
+        db_session.hypotheses = wm.hypotheses
+        db_session.evaluated_rules = [rule_id for rule_id, status in wm.evaluated_rules.items()]
+        db_session.fired_rules = list(wm.conflict_set)
+        db_session.status = "in_progress"  # 完了状態から戻る場合もあるので
+
+        db.commit()
+
+    return UndoResponse(
+        session_id=session_id,
+        next_question=next_question,
+        message="前の質問に戻りました",
+        can_undo=len(answer_history) > 0
     )
 
 @app.get("/api/consultation/{session_id}/rules", response_model=List[RuleResponse])

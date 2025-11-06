@@ -226,14 +226,12 @@ function RuleManagement() {
             <select
               value={filterVisaType}
               onChange={(e) => setFilterVisaType(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className="w-full px-3 py-2 border border-gray-300"
             >
               <option value="all">全てのビザタイプ</option>
               <option value="E">Eビザ</option>
               <option value="B">Bビザ</option>
               <option value="L">Lビザ</option>
-              <option value="H-1B">H-1Bビザ</option>
-              <option value="J-1">J-1ビザ</option>
             </select>
           </div>
 
@@ -315,13 +313,11 @@ function RuleManagement() {
                   <select
                     value={formData.visa_type}
                     onChange={(e) => setFormData({ ...formData, visa_type: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 py-2 border border-gray-300"
                   >
                     <option value="E">E</option>
                     <option value="B">B</option>
                     <option value="L">L</option>
-                    <option value="H-1B">H-1B</option>
-                    <option value="J-1">J-1</option>
                   </select>
                 </div>
 

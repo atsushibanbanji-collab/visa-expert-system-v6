@@ -1,20 +1,24 @@
 function InferencePanel({ rules, workingMemory, currentQuestion }) {
-  // 条件の色を決定
+  // 条件の色を決定（システムイメージ.txt 行86-91準拠）
   const getConditionColor = (fact) => {
     if (!workingMemory) return 'text-gray-500'
 
-    // findingsから確認
+    // findingsから確認（ユーザーが直接回答した基本事実）
     if (fact in workingMemory.findings) {
-      return workingMemory.findings[fact] ? 'text-gray-900 font-bold' : 'text-gray-400 line-through'
+      return workingMemory.findings[fact]
+        ? 'text-green-700 font-bold'      // 緑：Yes（条件を満たす）
+        : 'text-red-600 line-through'     // 赤：No（条件を満たさない）
     }
 
-    // hypothesesから確認（導出された事実）
+    // hypothesesから確認（他のルールの結論として導出された条件）
     if (fact in workingMemory.hypotheses) {
-      return workingMemory.hypotheses[fact] ? 'text-gray-800 font-semibold underline' : 'text-gray-400 line-through'
+      return workingMemory.hypotheses[fact]
+        ? 'text-purple-600 font-semibold underline'  // 紫+下線：導出された条件
+        : 'text-red-600 line-through'                // 赤：導出されなかった
     }
 
     // 未確認
-    return 'text-gray-500'
+    return 'text-gray-500'  // グレー：未確認の条件
   }
 
   // ルールの状態による背景色
@@ -98,14 +102,15 @@ function InferencePanel({ rules, workingMemory, currentQuestion }) {
         <p className="text-sm text-gray-300 mt-1">ルールの評価状態をリアルタイム表示</p>
       </div>
 
-      {/* 凡例 */}
+      {/* 凡例 - システムイメージ.txt 行86-94準拠 */}
       <div className="bg-white border-b border-gray-300 px-6 py-3">
         <h3 className="text-xs uppercase tracking-wide font-semibold text-gray-600 mb-2">凡例</h3>
         <div className="grid grid-cols-2 gap-2 text-xs text-gray-700">
           <div>• 未確認: <span className="text-gray-500">グレー</span></div>
-          <div>• Yes: <span className="font-bold text-gray-900">太字</span></div>
-          <div>• No: <span className="text-gray-400 line-through">取消線</span></div>
-          <div>• 導出: <span className="font-semibold underline text-gray-800">下線</span></div>
+          <div>• Yes: <span className="font-bold text-green-700">緑</span></div>
+          <div>• No: <span className="text-red-600 line-through">赤（取消線）</span></div>
+          <div>• 導出された条件: <span className="font-semibold underline text-purple-600">紫（下線）</span></div>
+          <div>• 導出された結論: <span className="font-bold text-blue-700">青</span></div>
         </div>
       </div>
 
@@ -156,15 +161,15 @@ function InferencePanel({ rules, workingMemory, currentQuestion }) {
                         </div>
                       </div>
 
-                      {/* 結論部 (THEN) */}
+                      {/* 結論部 (THEN) - システムイメージ.txt 行92-94準拠 */}
                       <div>
                         <p className="text-xs font-semibold text-gray-600 mb-1">THEN（結論）:</p>
                         <div className="pl-3">
                           {rule.actions.map((action, idx) => (
                             <p key={idx} className={`text-sm ${
                               workingMemory && action.fact in workingMemory.hypotheses
-                                ? 'text-gray-900 font-bold'
-                                : 'text-gray-600 font-semibold'
+                                ? 'text-blue-700 font-bold'      // 青：導出された結論
+                                : 'text-gray-600 font-semibold'  // グレー：未導出の結論
                             }`}>
                               ⇒ {action.fact}
                             </p>
