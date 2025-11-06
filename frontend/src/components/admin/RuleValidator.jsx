@@ -68,39 +68,39 @@ function RuleValidator() {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-3xl font-bold text-gray-800">整合性チェック</h2>
-          <p className="text-gray-600 mt-1">ルール間の矛盾・循環参照・到達不可能ルールの検出（システムイメージ.txt 行117-120）</p>
+          <p className="text-gray-600 mt-1">ルールの問題を自動診断（システムイメージ.txt 行115-121準拠）</p>
         </div>
         <button
           onClick={runValidation}
           disabled={isLoading}
-          className="border-2 border-gray-600 bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 font-semibold transition duration-200"
+          className="border-2 border-gray-600 bg-gray-800 hover:bg-gray-900 text-white px-6 py-3 text-lg font-semibold transition duration-200"
         >
-          再チェック
+          整合性チェック実行
         </button>
       </div>
 
-      {/* 総合結果 */}
+      {/* 総合結果 - システムイメージ.txt 行115-121準拠 */}
       {validationResults && (
-        <div className={`border-l-4 ${isValid ? 'border-green-600' : 'border-red-600'} bg-gray-50 p-6`}>
+        <div className={`border-l-4 ${isValid ? 'border-green-600' : 'border-red-600'} bg-white p-8`}>
           <div>
-            <h3 className={`text-xl font-bold ${isValid ? 'text-green-700' : 'text-red-700'}`}>
-              {isValid ? '整合性チェック: 合格' : '整合性チェック: 問題検出'}
+            <h3 className={`text-3xl font-bold ${isValid ? 'text-green-700' : 'text-red-700'}`}>
+              {isValid ? '問題ありません' : '問題が見つかりました'}
             </h3>
-            <p className="text-sm text-gray-700 mt-2">
+            <p className="text-base text-gray-700 mt-3">
               {isValid
-                ? '全てのルールは整合性が取れています。システムは正常に動作します。'
-                : '以下の問題が検出されました。修正が必要です。'
+                ? 'ルールは正しく設定されています。'
+                : '以下の問題を確認してください。'
               }
             </p>
           </div>
         </div>
       )}
 
-      {/* 矛盾の検出結果 */}
+      {/* 矛盾の検出結果 - システムイメージ.txt 行118準拠 */}
       {validationResults && validationResults.contradictions && validationResults.contradictions.length > 0 && (
         <div className="bg-white border shadow p-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">
-            ルール間の矛盾 ({validationResults.contradictions.length}件)
+          <h3 className="text-xl font-semibold text-red-700 mb-4 border-b pb-2">
+            このルールは他のルールと矛盾しています ({validationResults.contradictions.length}件)
           </h3>
           <div className="space-y-3">
             {validationResults.contradictions.map((issue, index) => (
@@ -127,11 +127,11 @@ function RuleValidator() {
         </div>
       )}
 
-      {/* 到達不可能なルール */}
+      {/* 到達不可能なルール - システムイメージ.txt 行119準拠 */}
       {validationResults && validationResults.unreachable_rules && validationResults.unreachable_rules.length > 0 && (
         <div className="bg-white border shadow p-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">
-            到達不可能なルール ({validationResults.unreachable_rules.length}件)
+          <h3 className="text-xl font-semibold text-red-700 mb-4 border-b pb-2">
+            このルールには到達できません ({validationResults.unreachable_rules.length}件)
           </h3>
           <div className="space-y-3">
             {validationResults.unreachable_rules.map((issue, index) => (
@@ -159,11 +159,11 @@ function RuleValidator() {
         </div>
       )}
 
-      {/* 循環参照 */}
+      {/* 循環参照 - システムイメージ.txt 行120準拠 */}
       {validationResults && validationResults.circular_references && validationResults.circular_references.length > 0 && (
         <div className="bg-white border shadow p-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">
-            循環参照 ({validationResults.circular_references.length}件)
+          <h3 className="text-xl font-semibold text-red-700 mb-4 border-b pb-2">
+            ルールが循環しています ({validationResults.circular_references.length}件)
           </h3>
           <div className="space-y-3">
             {validationResults.circular_references.map((issue, index) => (

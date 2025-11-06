@@ -7,7 +7,6 @@ import AdminLayout from './components/admin/AdminLayout'
 import RuleManagement from './components/admin/RuleManagement'
 import RuleValidator from './components/admin/RuleValidator'
 import DatabaseConsole from './components/admin/DatabaseConsole'
-import SQLConsole from './components/admin/SQLConsole'
 import Analytics from './components/admin/Analytics'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
@@ -274,7 +273,6 @@ function App() {
           <Route path="rules" element={<RuleManagement />} />
           <Route path="validator" element={<RuleValidator />} />
           <Route path="database" element={<DatabaseConsole />} />
-          <Route path="sql" element={<SQLConsole />} />
           <Route path="analytics" element={<Analytics />} />
         </Route>
       </Routes>

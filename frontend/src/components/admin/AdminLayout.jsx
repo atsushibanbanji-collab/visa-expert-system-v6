@@ -8,7 +8,6 @@ function AdminLayout() {
     { path: '/admin/rules', label: 'ルール管理' },
     { path: '/admin/validator', label: '整合性チェック' },
     { path: '/admin/database', label: 'データベース管理' },
-    { path: '/admin/sql', label: 'SQLコンソール' },
   ]
 
   return (

@@ -77,6 +77,55 @@ function DatabaseConsole() {
     }
   }
 
+  const handleCSVDownload = async () => {
+    setIsLoading(true)
+    try {
+      // consultation_sessionsテーブルのデータを取得
+      const response = await fetch(`${API_BASE_URL}/api/admin/database/tables/consultation_sessions?limit=10000`)
+      const data = await response.json()
+
+      if (!data.rows || data.rows.length === 0) {
+        setMessage('ダウンロードするデータがありません')
+        return
+      }
+
+      // CSVデータを生成
+      const headers = data.columns.join(',')
+      const rows = data.rows.map(row =>
+        data.columns.map(col => {
+          const value = row[col]
+          // 値がオブジェクトの場合はJSON文字列化
+          if (typeof value === 'object' && value !== null) {
+            return `"${JSON.stringify(value).replace(/"/g, '""')}"`
+          }
+          // 文字列の場合はダブルクォートでエスケープ
+          if (typeof value === 'string') {
+            return `"${value.replace(/"/g, '""')}"`
+          }
+          return value ?? ''
+        }).join(',')
+      ).join('\n')
+
+      const csv = headers + '\n' + rows
+
+      // CSVファイルとしてダウンロード
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `診断履歴_${new Date().toISOString().split('T')[0]}.csv`
+      a.click()
+      URL.revokeObjectURL(url)
+
+      setMessage('診断履歴をCSVダウンロードしました')
+    } catch (error) {
+      console.error('CSVダウンロードエラー:', error)
+      setMessage('CSVダウンロードに失敗しました')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const handleImport = async () => {
     if (!importFile) {
       setMessage('インポートするファイルを選択してください')
@@ -122,9 +171,17 @@ function DatabaseConsole() {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-3xl font-bold text-gray-800">データベース管理</h2>
-          <p className="text-gray-600 mt-1">テーブル閲覧・データエクスポート・インポート（システムイメージ.txt 行124-143）</p>
+          <p className="text-gray-600 mt-1">ワンクリックで簡単操作（システムイメージ.txt 行139-154準拠）</p>
         </div>
         <div className="flex gap-3">
+          {/* CSVダウンロード - システムイメージ.txt 行141準拠 */}
+          <button
+            onClick={handleCSVDownload}
+            disabled={isLoading}
+            className="border-2 border-gray-600 bg-gray-800 hover:bg-gray-900 text-white px-6 py-3 text-lg font-semibold transition duration-200 disabled:opacity-50"
+          >
+            CSVダウンロード
+          </button>
           {/* インポート */}
           <div className="flex items-center gap-2">
             <input
