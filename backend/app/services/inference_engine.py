@@ -201,15 +201,29 @@ class InferenceEngine:
 
         # 質問の優先順位を決定（バックワードチェイニングの正しい動作）
         # 1. 基本事実を最優先（ユーザーが直接答えられる質問）
-        # 2. 複数のゴールで共有されている事実を優先
-        # 3. 導出可能な事実は後回し（中間結論はユーザーが答えにくい）
+        # 2. ビザタイプ優先度（E > L > B）
+        # 3. 複数のゴールで共有されている事実を優先
+        # 4. 導出可能な事実は後回し（中間結論はユーザーが答えにくい）
         fact_scores = {}
         for fact in unasked_facts:
             score = 0
 
+            # ビザタイプ優先度ボーナス（E > L > B）
+            visa_type_bonus = 0
+            for goal, needed_facts in goal_facts_map.items():
+                if fact in needed_facts:
+                    if "Eビザ" in goal:
+                        visa_type_bonus = max(visa_type_bonus, 50)  # Eビザ最優先
+                    elif "Lビザ" in goal or "Blanket L" in goal:
+                        visa_type_bonus = max(visa_type_bonus, 30)  # Lビザ次
+                    elif "Bビザ" in goal or "B-1" in goal:
+                        visa_type_bonus = max(visa_type_bonus, 10)  # Bビザ最後
+
+            score += visa_type_bonus
+
             # 複数のゴールで共有されているか
             shared_count = sum(1 for needed in goal_facts_map.values() if fact in needed)
-            score += shared_count * 10
+            score += shared_count * 5  # 共有ボーナスを減らしてビザタイプ優先度を優先
 
             # 基本事実を最優先（ユーザーが直接答えられる）
             if self.is_basic_fact(fact):
