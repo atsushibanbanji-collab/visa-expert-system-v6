@@ -11,6 +11,8 @@ function DatabaseConsole() {
   const [page, setPage] = useState(0)
   const [pageSize] = useState(50)
   const [importFile, setImportFile] = useState(null)
+  const [backups, setBackups] = useState([])
+  const [showRestoreDialog, setShowRestoreDialog] = useState(false)
 
   useEffect(() => {
     fetchTables()
@@ -163,6 +165,74 @@ function DatabaseConsole() {
     }
   }
 
+  // バックアップ実行（システムイメージ.txt 行142準拠）
+  const handleBackup = async () => {
+    setIsLoading(true)
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/admin/database/export`)
+      const data = await response.json()
+
+      // バックアップファイルとしてダウンロード
+      const timestamp = new Date().toISOString().replace(/:/g, '-').split('.')[0]
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `backup_${timestamp}.json`
+      a.click()
+      URL.revokeObjectURL(url)
+
+      setMessage(`バックアップを実行しました (backup_${timestamp}.json)`)
+    } catch (error) {
+      console.error('バックアップエラー:', error)
+      setMessage('バックアップに失敗しました')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // データ復元（システムイメージ.txt 行143準拠）
+  const handleRestore = async (file) => {
+    if (!file) {
+      setMessage('復元するファイルを選択してください')
+      return
+    }
+
+    if (!confirm('データベースを復元しますか？現在のデータは上書きされます。')) {
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      const fileContent = await file.text()
+      const data = JSON.parse(fileContent)
+
+      const response = await fetch(`${API_BASE_URL}/api/admin/database/import`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+
+      if (response.ok) {
+        setMessage('データベースを復元しました')
+        setShowRestoreDialog(false)
+        // テーブル一覧を再取得
+        await fetchTables()
+        if (selectedTable) {
+          await fetchTableData(selectedTable, page)
+        }
+      } else {
+        const errorData = await response.json()
+        setMessage(`復元に失敗しました: ${errorData.detail || ''}`)
+      }
+    } catch (error) {
+      console.error('復元エラー:', error)
+      setMessage('復元に失敗しました')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const totalPages = tableData ? Math.ceil(tableData.total_count / pageSize) : 0
 
   return (
@@ -182,6 +252,31 @@ function DatabaseConsole() {
           >
             CSVダウンロード
           </button>
+
+          {/* バックアップ実行 - システムイメージ.txt 行142準拠 */}
+          <button
+            onClick={handleBackup}
+            disabled={isLoading}
+            className="border-2 border-gray-600 bg-gray-800 hover:bg-gray-900 text-white px-6 py-3 text-lg font-semibold transition duration-200 disabled:opacity-50"
+          >
+            バックアップ実行
+          </button>
+
+          {/* データ復元 - システムイメージ.txt 行143準拠 */}
+          <label className="border-2 border-gray-600 bg-gray-800 hover:bg-gray-900 text-white px-6 py-3 text-lg font-semibold transition duration-200 cursor-pointer inline-block">
+            データ復元
+            <input
+              type="file"
+              accept=".json"
+              onChange={(e) => {
+                if (e.target.files[0]) {
+                  handleRestore(e.target.files[0])
+                }
+              }}
+              className="hidden"
+              disabled={isLoading}
+            />
+          </label>
           {/* インポート */}
           <div className="flex items-center gap-2">
             <input
