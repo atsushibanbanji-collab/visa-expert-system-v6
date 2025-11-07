@@ -9,33 +9,8 @@ function DiagnosisPanel({ currentQuestion, answers, onAnswer, onBack, onReset, i
         <p className="text-sm text-gray-600 mt-1">質問に回答してください</p>
       </div>
 
-      {/* 回答履歴 */}
+      {/* メインコンテンツ */}
       <div className="flex-1 overflow-y-auto p-6">
-        {answers.length > 0 && (
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-700 mb-3">回答履歴</h3>
-            <div className="space-y-2">
-              {answers.map((item, index) => (
-                <div key={index} className="bg-white p-3 border border-gray-300">
-                  <p className="text-xs uppercase tracking-wide text-gray-500 mb-1">質問 {index + 1}</p>
-                  <p className="text-gray-800 font-medium mb-2">{item.question}</p>
-                  <p className="text-sm text-gray-700">
-                    回答: <span className={`font-semibold ${
-                      item.answer === 'yes' ? 'text-green-700' :
-                      item.answer === 'no' ? 'text-red-700' :
-                      'text-gray-600'
-                    }`}>
-                      {item.answer === 'yes' ? 'はい' :
-                       item.answer === 'no' ? 'いいえ' :
-                       'わからない'}
-                    </span>
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* 詳細質問モードの説明 */}
         {detailQuestionsMode && detailQuestionsContext && (
           <div className="bg-gray-50 border-l-4 border-gray-600 p-4 mb-4">
