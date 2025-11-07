@@ -189,24 +189,37 @@ class InferenceEngine:
             all_needed_facts.update(needed)
 
         # 既に質問済みまたはスキップされた事実を除外
+        # ゴール自体も質問候補から除外（ゴールは結論なので質問しない）
         unasked_facts = [
             fact for fact in all_needed_facts
             if fact not in wm.findings
             and fact not in wm.skipped_facts
             and fact not in wm.hypotheses  # 既に導出された事実も除外
+            and fact not in goals  # ゴール（結論）は質問しない
         ]
 
         if not unasked_facts:
             return None
 
         # 質問の優先順位を決定（システムイメージ.txt 行41-46準拠）
-        # 1. 答えやすい質問を最優先（短い質問文）
-        # 2. 導出可能な事実を優先（質問数削減のため）
-        # 3. ビザタイプ優先度（E > L > B）
-        # 4. 複数のゴールで共有されている事実を優先
+        # 1. ルール優先度（より上位のルールの条件を優先）
+        # 2. ビザタイプ優先度（E > L > B）
+        # 3. 基本事実を優先（ユーザーが直接答えられる）
+        # 4. 答えやすい質問を優先（短い質問文）
         fact_scores = {}
         for fact in unasked_facts:
             score = 0
+
+            # ルール優先度ボーナス（ルールIDが小さいほど基本的）
+            min_rule_id = 999
+            for rule_id in self.get_dependent_rules(fact):
+                if rule_id in self.rules:
+                    min_rule_id = min(min_rule_id, rule_id)
+
+            # ルールIDが小さいほど高得点（1-10 → 90-0点）
+            if min_rule_id < 999:
+                rule_bonus = max(0, 100 - min_rule_id * 3)
+                score += rule_bonus
 
             # ビザタイプ優先度ボーナス（E > L > B）
             visa_type_bonus = 0
@@ -223,17 +236,17 @@ class InferenceEngine:
 
             # 複数のゴールで共有されているか
             shared_count = sum(1 for needed in goal_facts_map.values() if fact in needed)
-            score += shared_count * 10
+            score += shared_count * 5
 
-            # 導出可能な事実を優先（質問数削減のため、システムイメージ行41-46）
-            if self.is_derivable_fact(fact):
-                score += 50  # 導出可能な事実を優先
+            # 基本事実を優先（ユーザーが直接答えられる）
+            if self.is_basic_fact(fact):
+                score += 40  # 基本事実を優先
             else:
-                score += 30  # 基本事実は次点
+                score += 20  # 導出可能な事実は次点
 
             # 答えやすさボーナス（短い質問文 = 抽象的で答えやすい）
             if len(fact) <= 30:
-                score += 30  # 短い質問は答えやすい
+                score += 20  # 短い質問は答えやすい
 
             fact_scores[fact] = score
 
