@@ -199,9 +199,10 @@ class InferenceEngine:
         if not unasked_facts:
             return None
 
-        # 質問の優先順位を決定
-        # 1. 導出可能な事実（抽象度が高い）を優先
+        # 質問の優先順位を決定（バックワードチェイニングの正しい動作）
+        # 1. 基本事実を最優先（ユーザーが直接答えられる質問）
         # 2. 複数のゴールで共有されている事実を優先
+        # 3. 導出可能な事実は後回し（中間結論はユーザーが答えにくい）
         fact_scores = {}
         for fact in unasked_facts:
             score = 0
@@ -210,9 +211,12 @@ class InferenceEngine:
             shared_count = sum(1 for needed in goal_facts_map.values() if fact in needed)
             score += shared_count * 10
 
-            # 導出可能な事実（中間ゴール）には高い優先度
-            if self.is_derivable_fact(fact):
-                score += 100  # 導出可能な事実を優先
+            # 基本事実を最優先（ユーザーが直接答えられる）
+            if self.is_basic_fact(fact):
+                score += 100  # 基本事実を優先
+            else:
+                # 導出可能な事実は低優先（中間結論は答えにくい）
+                score -= 50
 
             fact_scores[fact] = score
 

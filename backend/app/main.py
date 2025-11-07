@@ -105,12 +105,27 @@ def start_consultation(request: ConsultationStartRequest, db: Session = Depends(
     engine = InferenceEngine(inference_rules)
     wm = WorkingMemory()
 
+    # visa_typesに基づいてゴールをフィルタリング
+    filtered_goals = []
+    visa_type_map = {
+        "E": ["Eビザでの申請ができます"],
+        "L": ["Blanket Lビザでの申請ができます", "Lビザ（Individual）での申請ができます"],
+        "B": ["Bビザの申請ができます", "契約書に基づくBビザの申請ができます",
+              "B-1 in lieu of H-1Bビザの申請ができます", "B-1 in lieu of H3ビザの申請ができます"],
+        "H-1B": ["H-1Bビザでの申請ができます"],
+        "J-1": ["J-1ビザの申請ができます"]
+    }
+
+    for visa_type in request.visa_types:
+        if visa_type in visa_type_map:
+            filtered_goals.extend(visa_type_map[visa_type])
+
     # セッション保存（システムイメージ.txt 行25-31: 回答履歴管理）
     sessions[session_id] = {
         "engine": engine,
         "wm": wm,
         "visa_types": request.visa_types,
-        "goals": VISA_GOALS,
+        "goals": filtered_goals,  # フィルタリングされたゴール
         "answer_history": []  # 回答履歴スタック（戻る機能用）
     }
 
@@ -124,7 +139,7 @@ def start_consultation(request: ConsultationStartRequest, db: Session = Depends(
     db.commit()
 
     # 最初の質問を取得
-    next_question = engine.get_next_question(VISA_GOALS, wm)
+    next_question = engine.get_next_question(filtered_goals, wm)
 
     return ConsultationStartResponse(
         session_id=session_id,
